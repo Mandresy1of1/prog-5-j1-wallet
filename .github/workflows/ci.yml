@@ -1,0 +1,36 @@
+name: Java CI with Maven + Checkstyle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Récupérer le code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Installer Java 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3️⃣ Cacher le repository Maven pour accélérer
+      - name: Cache Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+
+      # 4️⃣ Lancer la validation Checkstyle et build Maven
+      - name: Maven Verify (compile + tests + Checkstyle)
+        run: mvn -B verify
+
